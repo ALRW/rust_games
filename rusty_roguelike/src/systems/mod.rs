@@ -1,11 +1,12 @@
 use crate::prelude::*;
 
-mod entity_renderer;
-mod map_renderer;
-mod player_input;
-mod random_move;
 mod collisions;
 mod end_turn;
+mod entity_renderer;
+mod map_renderer;
+mod movement;
+mod player_input;
+mod random_move;
 
 pub fn build_input_scheduler() -> Schedule {
     Schedule::builder()
@@ -18,6 +19,8 @@ pub fn build_input_scheduler() -> Schedule {
 
 pub fn build_player_scheduler() -> Schedule {
     Schedule::builder()
+        .add_system(movement::movement_system())
+        .flush()
         .add_system(collisions::collisions_system())
         .flush()
         .add_system(map_renderer::map_renderer_system())
@@ -29,6 +32,8 @@ pub fn build_player_scheduler() -> Schedule {
 pub fn build_monster_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(random_move::random_move_system())
+        .flush()
+        .add_system(movement::movement_system())
         .flush()
         .add_system(collisions::collisions_system())
         .flush()
